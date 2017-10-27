@@ -1,0 +1,121 @@
+*{
+  box-sizing: border-box;
+}
+
+body{
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+  font-family: "Microsoft JhengHei";
+}
+@media (min-width: 720px){
+  body{
+    font-size: 15px;
+  }
+}
+@media (min-width: 1280px){
+  body{
+    font-size: 16px;
+  }
+}
+
+footer{
+  padding: 15px;
+}
+
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 80px;
+}
+
+.app-header {
+  background-color: #222;
+  padding: 5px;
+  color: white;
+}
+
+.app-title {
+  color: grey;
+  font-family: Courier New, Courier, monospace;
+  font-size: 1.6em;
+  font-weight: 100;
+}
+
+
+#main-canvas{
+  display: block;
+  margin: 10px auto 30px auto;
+  border: 1px solid grey;
+}
+
+.menus{
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.menu{
+  display: block;
+  width: 95wv;
+  margin: 10px auto;
+  border: 1px solid #333;
+  padding: 5px;
+  text-align: right;
+}
+@media (min-width: 720px){
+  .menu{
+    display: inline-block;
+    vertical-align: top;
+    margin: 20px;
+    padding: 10px;
+  }
+}
+
+label{
+  display: block;
+}
+
+input[type='text']{
+  width: 120px;
+  margin: 5px;
+  border: 1px solid #333;
+  background-color: #333;
+  padding: 10px;
+  color: snow;
+  transition: all 700ms;
+}
+input[type='text']:hover{
+  border: 1px solid grey;
+}
+
+.btn-reset{
+  display: block;
+  margin: 5px auto;
+  border: none;
+  border-radius: 3px;
+  background-color: #333;
+  padding: 10px;
+  color: snow;
+  cursor: pointer;
+  transition: all 700ms;
+}
+.btn-reset:hover{
+  background-color: snow;
+  color: grey;
+}
+
+.color-list{
+  margin: 5px;
+  border: 1px solid #333;
+  background-color: #333;
+  padding: 10px;
+  color: snow;
+  transition: all 700ms;
+}
+.color-list:hover{
+  border: 1px solid grey;
+}
