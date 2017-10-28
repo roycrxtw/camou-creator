@@ -19,6 +19,15 @@ body{
   }
 }
 
+a{
+  color: indianred;
+  text-decoration: none;
+  transition: all 700ms;
+}
+a:hover{
+  color: slateblue;
+}
+
 footer{
   padding: 15px;
 }
@@ -39,6 +48,8 @@ footer{
 }
 
 .app-title {
+  margin: 0 auto;
+  padding-top: 10px;
   color: grey;
   font-family: Courier New, Courier, monospace;
   font-size: 1.6em;
@@ -70,7 +81,7 @@ footer{
   .menu{
     display: inline-block;
     vertical-align: top;
-    margin: 20px;
+    margin: 10px 20px;
     padding: 10px;
   }
 }
@@ -118,4 +129,39 @@ input[type='text']:hover{
 }
 .color-list:hover{
   border: 1px solid grey;
+}
+
+.tooltips{
+  color: darkorange;
+  font-weight: 100;
+}
+
+
+.colorPickerContainer{
+  display: block;
+  margin: auto;
+  border: 0px solid red;
+}
+
+.colorLabel{
+  display: block;
+  border: 0px solid grey;
+  border-bottom: 2px solid #222;
+  color: grey;
+  cursor: pointer;
+  transition: all 700ms;
+}
+.colorLabel:hover{
+  border-bottom: 2px solid grey;
+}
+
+.colorPicker{
+  width: 35px;
+  height: 35px;
+  margin: 0;
+  outline: none;
+  border: 0;
+  background-color: #222;
+  padding: 0;
+  cursor: pointer;
 }

@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "license": "MIT",
+  "homepage": "https://royvbtw.github.io/camou-creator",
   "dependencies": {
+    "gh-pages": "^1.0.0",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "react-scripts": "1.0.14"
@@ -12,10 +14,12 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/royvbtw/camou-creator.git"
-  },
+  }
 }

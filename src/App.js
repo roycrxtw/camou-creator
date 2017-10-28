@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import colorData from './colorData';
+import { parseHexToRGB, getRGBString } from './util';
 import './App.css';
 
 const data = [];
@@ -8,6 +9,25 @@ const DEFAULT_CANVAS_SIZE = 300;
 const DEFAULT_DENSITY = 50;
 const CANVAS_SIZE_MAX = 4000;
 const CANVAS_SIZE_MIN = 100;
+const DENSITY_MIN = 10;
+
+// ColorPickers component.
+const ColorPickers = (props) => {
+  const {changeHandler, currentColor} = props;
+  const pickers = [];
+  for(let i = 0; i < 4; i++){
+    pickers.push(
+      <label className='colorLabel' key={i}>
+        {getRGBString(parseHexToRGB(currentColor[i]))}
+        <input type='color' className='colorPicker'
+          value={currentColor[i]} onChange={e => {changeHandler(e, i)}}
+        />
+      </label>
+    );
+  }
+  return (<div className='colorPickerContainer'>{pickers}</div>);
+};
+
 
 class App extends Component {
   constructor(props){
@@ -15,69 +35,69 @@ class App extends Component {
 
     this.state = {
       selectedColor: 0,
+      currentColor: colorData[0].color,
       density: DEFAULT_DENSITY,
-      canvasSize: DEFAULT_CANVAS_SIZE,
-      focus: null
+      canvasSize: DEFAULT_CANVAS_SIZE
     };
   }
   componentDidMount(){
-    this.draw();
+    this.drawCanvas();
   }
 
   componentDidUpdate(){
-    this.draw();
+    this.drawCanvas();
   }
 
-  draw = () => {
-    console.log('App.draw() started.')
-    const { canvasSize, density, selectedColor } = this.state;
+  drawCanvas = () => {
+    const { canvasSize, density, currentColor } = this.state;
 
     const tileSize = Math.ceil(canvasSize / density);
     const rows = Math.ceil(canvasSize / tileSize);
     const columns = Math.ceil(canvasSize / tileSize)
-    const ctx = this.refs.canvas.getContext('2d');
-
+    
+    // Setup color data
     for(let x = 0; x < columns; x++){
       data[x] = [];
       
       for(let y = 0; y < rows; y++){
-        let p = Math.floor(Math.random() * 100);
-        if(p < 0){
-          data[x][y] = 'rgb(60, 80, 60)';
-        }else{
-          let leftTileColor;
-          let topTileColor;
-          let numberOfChoice = 4;
-          if(x > 0){
-            leftTileColor = data[x - 1][y];
-            numberOfChoice++;
-          }
-          if(y > 0){
-            topTileColor = data[x][y - 1];
-            numberOfChoice++;
-          }
-          switch(Math.floor(Math.random() * numberOfChoice)){
-            case 0: 
-              data[x][y] = colorData[selectedColor].color[0]; break;
-            case 1:
-              data[x][y] = colorData[selectedColor].color[1]; break;
-            case 2:
-              data[x][y] = colorData[selectedColor].color[2]; break;
-            case 3:
-              data[x][y] = colorData[selectedColor].color[3]; break;
-            case 4:
-              data[x][y] = topTileColor; break;
-            case 5:
-              data[x][y] = leftTileColor; break;
-            default:
-              data[x][y] = colorData[selectedColor].color[0]; break;
-          }
-          //ctx.fillStyle = (x % 2 === 0)? '#222': 'wheat';
-          //ctx.fillRect(x * this.tileSize, y * this.tileSize, this.tileSize, this.tileSize);
+        let leftTileColor;
+        let topTileColor;
+        let numberOfChoice = 4;
+        if(x > 0){
+          leftTileColor = data[x - 1][y];
+          numberOfChoice += 4;
+        }
+        if(y > 0){
+          topTileColor = data[x][y - 1];
+          numberOfChoice += 4;
+        }
+        switch(Math.floor(Math.random() * numberOfChoice)){
+          case 0: 
+            data[x][y] = currentColor[0]; break;
+          case 1:
+            data[x][y] = currentColor[1]; break;
+          case 2:
+            data[x][y] = currentColor[2]; break;
+          case 3:
+            data[x][y] = currentColor[3]; break;
+          case 4:
+          case 5:
+          case 6:
+          case 7:
+            data[x][y] = topTileColor; break;
+          case 8:
+          case 9:
+          case 10:
+          case 11:
+            data[x][y] = leftTileColor; break;
+          default:
+            data[x][y] = currentColor[0]; break;
         }
       }
     }
 
+    // Draw canvas by color data.
+    const ctx = this.refs.canvas.getContext('2d');
     for(let x = 0; x < columns; x++){
       for(let y = 0; y < rows; y++){
         ctx.fillStyle = data[x][y];
@@ -88,10 +108,13 @@ class App extends Component {
 
   setCanvasSize = (event) => {
     let value = event.target.value;
+    let tooltips = undefined;
     if(value > CANVAS_SIZE_MAX){
       value = CANVAS_SIZE_MAX;
+      tooltips = 'Max canvas size is ' + CANVAS_SIZE_MAX;
     }
     this.setState({
+      tooltips,
       canvasSize: value
     });
   };
@@ -107,11 +130,13 @@ class App extends Component {
     const current = this.state.canvasSize;
     if(event.deltaY > 0){
       this.setState({
-        canvasSize: (current < CANVAS_SIZE_MAX)? current + 20: CANVAS_SIZE_MAX
+        canvasSize: (current < CANVAS_SIZE_MAX)? current + 20: CANVAS_SIZE_MAX,
+        tooltips: undefined
       });
     }else if(event.deltaY < 0){
       this.setState({
-        canvasSize: (current > CANVAS_SIZE_MIN)? current - 20: CANVAS_SIZE_MIN
+        canvasSize: (current > CANVAS_SIZE_MIN)? current - 20: CANVAS_SIZE_MIN,
+        tooltips: undefined
       });
     }
   };
@@ -121,27 +146,48 @@ class App extends Component {
     const current = this.state.density;
     if(event.deltaY > 0){
       this.setState({
-        density: current + 1
+        density: current + 1,
+        tooltips: undefined
       });
     }else if(event.deltaY < 0){
-      this.setState({
-        density: current - 1
-      });
+      if(current <= DENSITY_MIN){
+        this.setState({
+          tooltips: 'The min density is ' + DENSITY_MIN,
+          density: DENSITY_MIN
+        });
+      }else{
+        this.setState({
+          density: current - 1,
+          tooltips: undefined
+        });
+      }
     }
   };
 
   reset = () => {
     this.setState({
       canvasSize: DEFAULT_CANVAS_SIZE,
-      density: DEFAULT_DENSITY
+      density: DEFAULT_DENSITY,
+      currentColor: colorData[this.state.selectedColor].color
     });
   };
 
-  setColor = (event) => {
+  listHandler = (event) => {
+    const newColor = colorData[event.target.value].color;
     this.setState({
-      selectedColor: event.target.value
+      selectedColor: event.target.value,
+      currentColor: newColor
     });
   };
+
+  pickerHandler = (event, i) => {
+    const newColor = [...this.state.currentColor];
+    newColor[i] = event.target.value
+    this.setState({
+      currentColor: newColor
+    });
+  };
+
 
   menu = (props) => {
     const getList = () => {
@@ -150,32 +196,36 @@ class App extends Component {
       ));
 
       return (
-        <select className='color-list' onChange={this.setColor}>{listItems}</select>
+        <select className='color-list' onChange={this.listHandler}>{listItems}</select>
       );
-    }
+    }    
 
-    const { canvasSize, density } = this.state;
+    const { canvasSize, density, currentColor } = this.state;
     return (
       <div className='menus'>
         <div className='menu'>
+          {getList()}
           <label htmlFor='sizeField'>
             Image size in px
-            <input type='text' id='sizeField' value={canvasSize} 
-              //onChange={this.setCanvasWidth} onWheel={e => this.widthFieldWheelHandler(e)}
+            <input type='text' id='sizeField' value={canvasSize} title='Set image size'
               onChange={this.setCanvasSize} 
               onWheel={this.sizeFieldWheelHandler}
             />
           </label>
           <label htmlFor='densityField'>
             Camouflage density
-            <input type='text' id='densityField' value={density} 
+            <input type='text' id='densityField' value={density} title='Set density'
               onChange={this.setDensity} onWheel={this.densityFieldWheelHandler}
             />
           </label>
+          
+          <span style={{color: 'grey'}}>You can use the mouse wheel to adjust setting values.</span>
+          <div className='tooltips'>{this.state.tooltips}</div>
         </div>
 
         <div className='menu'>
-          {getList()}
+          
+          <ColorPickers currentColor={currentColor} changeHandler={this.pickerHandler} />
           <button className='btn-reset' onClick={this.reset}>RESET</button>
         </div>
       </div>
@@ -194,10 +244,11 @@ class App extends Component {
         <p>Current image size is {canvasSize} x {canvasSize}. Right click on the image to save it.</p>
 
         <canvas ref='canvas' id='main-canvas' title='Save me' width={canvasSize} height={canvasSize}>
+          Please enable javascript and/or update to modern browser.
         </canvas>
         
         <footer>
-          Project camouCreator by Roy Lu(royvbtw) Oct, 2017
+          <a href='https://github.com/royvbtw/camou-creator'>Project CamouCreator</a> by <a href='https://royvbtw.uk'>Roy Lu(royvbtw)</a> Oct, 2017
         </footer>
       </div>
     );
