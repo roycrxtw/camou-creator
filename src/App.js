@@ -4,7 +4,7 @@ import colorData from './colorData';
 import { parseHexToRGB, getRGBString } from './util';
 import './App.css';
 
-const data = [];
+const data = [];    // colour data
 const DEFAULT_CANVAS_SIZE = 300;
 const DEFAULT_DENSITY = 50;
 const CANVAS_SIZE_MAX = 4000;
@@ -64,37 +64,19 @@ class App extends Component {
       for(let y = 0; y < rows; y++){
         let leftTileColor;
         let topTileColor;
-        let numberOfChoice = 4;
         if(x > 0){
           leftTileColor = data[x - 1][y];
-          numberOfChoice += 4;
         }
         if(y > 0){
           topTileColor = data[x][y - 1];
-          numberOfChoice += 4;
         }
-        switch(Math.floor(Math.random() * numberOfChoice)){
-          case 0: 
-            data[x][y] = currentColor[0]; break;
-          case 1:
-            data[x][y] = currentColor[1]; break;
-          case 2:
-            data[x][y] = currentColor[2]; break;
-          case 3:
-            data[x][y] = currentColor[3]; break;
-          case 4:
-          case 5:
-          case 6:
-          case 7:
-            data[x][y] = topTileColor; break;
-          case 8:
-          case 9:
-          case 10:
-          case 11:
-            data[x][y] = leftTileColor; break;
-          default:
-            data[x][y] = currentColor[0]; break;
-        }
+        let p = Math.random() * 100;
+        if(p < 10) data[x][y] = currentColor[0];
+        else if(p < 20) data[x][y] = currentColor[1];
+        else if(p < 30) data[x][y] = currentColor[2];
+        else if(p < 40) data[x][y] = currentColor[3];
+        else if(p < 70) data[x][y] = topTileColor;
+        else data[x][y] = leftTileColor;
       }
     }
 
