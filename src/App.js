@@ -32,6 +32,8 @@ const ColorPickers = (props) => {
 class App extends Component {
   constructor(props){
     super(props);
+    
+    this.canvas = null;
 
     this.state = {
       selectedColor: 0,
@@ -97,7 +99,7 @@ class App extends Component {
     }
 
     // Draw canvas by color data.
-    const ctx = this.refs.canvas.getContext('2d');
+    const ctx = this.canvas.getContext('2d');
     for(let x = 0; x < columns; x++){
       for(let y = 0; y < rows; y++){
         ctx.fillStyle = data[x][y];
@@ -243,7 +245,7 @@ class App extends Component {
 
         <p>Current image size is {canvasSize} x {canvasSize}. Right click on the image to save it.</p>
 
-        <canvas ref='canvas' id='main-canvas' title='Save me' width={canvasSize} height={canvasSize}>
+        <canvas ref={ node => this.canvas = node} id='main-canvas' title='Save me' width={canvasSize} height={canvasSize}>
           Please enable javascript and/or update to modern browser.
         </canvas>
         
