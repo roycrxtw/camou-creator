@@ -34,6 +34,7 @@ class App extends Component {
     super(props);
     
     this.canvas = null;
+    this.btnSave = null;
 
     this.state = {
       selectedColor: 0,
@@ -44,10 +45,12 @@ class App extends Component {
   }
   componentDidMount(){
     this.drawCanvas();
+    this.updateSaveButton();
   }
 
   componentDidUpdate(){
     this.drawCanvas();
+    this.updateSaveButton();
   }
 
   drawCanvas = () => {
@@ -148,6 +151,12 @@ class App extends Component {
     }
   };
 
+  updateSaveButton = () => {
+    console.log(`Update save button with data url.`);
+    this.btnSave.href = this.canvas.toDataURL();
+
+  };
+
   reset = () => {
     this.setState({
       canvasSize: DEFAULT_CANVAS_SIZE,
@@ -225,14 +234,14 @@ class App extends Component {
           {this.menu()}
         </header>
 
-        <p>Current image size is {canvasSize} x {canvasSize}. Right click on the image to save it.</p>
+        <p>Current image size is {canvasSize} x {canvasSize}. <a download='camouflage.png' ref={node => this.btnSave = node}>Click here</a> or right click on the image to save it.</p>
 
         <canvas ref={ node => this.canvas = node} id='main-canvas' title='Save me' width={canvasSize} height={canvasSize}>
           Please enable javascript and/or update to modern browser.
         </canvas>
         
         <footer>
-          <a href='https://github.com/royvbtw/camou-creator'>Project CamouCreator</a> by <a href='https://royvbtw.uk'>Roy Lu(royvbtw)</a> Oct, 2017
+          <a href='https://github.com/royvbtw/camou-creator'>Project CamouCreator</a> by <a href='https://royvbtw.uk'>Roy Lu(royvbtw)</a> Jan 2018
         </footer>
       </div>
     );
